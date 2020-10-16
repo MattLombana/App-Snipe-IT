@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  snipe-it:
+    image: snipe/snipe-it:latest
+    container_name: snipe-it
+    hostname: snipe-it
+    restart: unless-stopped
+    volumes:
+      - ../Data/certs/snipeit-ssl.crt:/var/lib/snipeit/ssl/snipeit-ssl.crt
+      - ../Data/certs/snipeit-ssl.key:/var/lib/snipeit/ssl/snipeit-ssl.key
+      - ../Data/snipeit:/var/lib/snipeit
+    env_file:
+      - ./env.local
+    ports:
+      - "443:443"
+    depends_on:
+      - snipe-it-mysql
+
+  snipe-it-mysql:
+    image: mysql:5.6
+    container_name: snipe-it-mysql
+    hostname: snipe-it-mysql
+    restart: unless-stopped
+    volumes:
+      - ../Data/mysql:/var/lib/mysql
+    env_file:
+      - ./env.local
+    command: --default-authentication-plugin=mysql_native_password
